@@ -1,0 +1,19 @@
+{
+  "name": "websocket-demonstration",
+  "version": "1.0.0",
+  "description": "a demonstration of websockets and socket.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pqmcgill/websocket-demonstration.git"
+  },
+  "author": "Patrick McGill",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pqmcgill/websocket-demonstration/issues"
+  },
+  "homepage": "https://github.com/pqmcgill/websocket-demonstration#readme"
+}
