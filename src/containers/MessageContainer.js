@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import MessageList from '../components/MessageList';
 import MessageInput from '../components/MessageInput';
 import LoginForm from '../components/LoginForm';
-import NotificationList from '../components/NotificationList';
 
 export default class MessageContainer extends Component {
 	constructor (props) {
@@ -10,18 +9,7 @@ export default class MessageContainer extends Component {
 		this.state = {
 			loginText: '',
 			messageText: '',
-			notifications: [{
-				title: 'uh oh!',
-				msg: 'spaghetti-o!'
-			}],
-			messages: [{
-				msg: 'foobar',
-				author: 'yo momma'
-			},
-			{
-				msg: 'barfoo',
-				author: 'bitch, please!'
-			}]
+			messages: []
 		};
 	}
 
