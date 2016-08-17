@@ -23,50 +23,40 @@ export default class MessageContainer extends Component {
 				author: 'bitch, please!'
 			}]
 		};
-
-		this.handleLoginTextChange = this.handleLoginTextChange.bind(this);
-		this.handleJoin = this.handleJoin.bind(this);
-		this.handlePost = this.handlePost.bind(this);
-		this.handleMessageTextChange = this.handleMessageTextChange.bind(this);
-		this.handleIncomingNotification = this.handleIncomingNotification.bind(this);
 	}
 
-	handleIncomingNotification (note) {
-		this.setState({
-			notifications: this.state.notifications.concat([ note ])
-		}, () => {
-			setTimeout(() => {
-				// remove note after 5 seconds
-			}, 5000);
-		});
-	}
-
-	handleLoginTextChange (e) {
+	handleLoginTextChange = (e) => {
 		this.setState({
 			loginText: e.target.value
 		});
 	}
 
-	handleMessageTextChange (e) {
+	handleMessageTextChange = (e) => {
 		this.setState({
 			messageText: e.target.value
-		})
+		});
 	}
 
-	handlePost () {
-		this.setState({
-			messages: this.state.messages.concat([{
-				msg: this.state.messageText,
-				author: this.state.username
-			}])
-		}, () => {
+	addMessage = message => {
+		return new Promise(resolve => {
+			this.setState({
+				messages: this.state.messages.concat([ message ])
+			}, resolve);
+		});
+	}
+
+	handlePost = () => {
+		this.addMessage({
+			msg: this.state.messageText,
+			author: this.state.username
+		}).then(() => {
 			this.setState({
 				messageText: ''
 			});
 		});
 	}
 
-	handleJoin () {
+	handleJoin = () => {
 		this.setState({
 			username: this.state.loginText
 		}, () => {
@@ -77,15 +67,23 @@ export default class MessageContainer extends Component {
 	}
 
 	render () {
-		const { loginText, messageText } = this.state;
-		const { handleJoin, handlePost, handleLoginTextChange, handleMessageTextChange } = this;
 		const input = this.state.username ? 
-			<MessageInput onPost={ handlePost } value={ messageText } onChange={ handleMessageTextChange }/> :
-			<LoginForm onJoin={ handleJoin } value={ loginText } onChange={ handleLoginTextChange }/>;
+			<MessageInput onPost={ this.handlePost } 
+				value={ this.state.messageText } 
+				onChange={ this.handleMessageTextChange }
+			/> :
+			<LoginForm onJoin={ this.handleJoin } 
+				value={ this.state.loginText } 
+				onChange={ this.handleLoginTextChange }
+			/>;
+
+		const welcome = this.state.username ?
+			<h2>Welcome, { this.state.username }</h2> :
+		 	<h2>Enter username to join the conversation</h2>;	
 
 		return (
 			<div>
-				<NotificationList notifications={ this.state.notifications }/>
+				{ welcome }
 				<MessageList messages={ this.state.messages }/>
 				{ input }
 			</div>
