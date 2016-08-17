@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import socket from '../util/socket_conn';
 
 import NotificationList from '../components/NotificationList';
 
@@ -9,6 +10,8 @@ export default class NotificationContainer extends Component {
 		this.state = {
 			notifications: []
 		};
+
+		socket.on('NOTIFICATION', this.handleIncomingNotification);
 	}
 
 	addNotification = (note) => {

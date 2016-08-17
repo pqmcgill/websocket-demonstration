@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import MessageList from '../components/MessageList';
 import MessageInput from '../components/MessageInput';
 import LoginForm from '../components/LoginForm';
-import NotificationList from '../components/NotificationList';
+import socket from '../util/socket_conn'; 
 
 export default class MessageContainer extends Component {
 	constructor (props) {
@@ -23,6 +23,8 @@ export default class MessageContainer extends Component {
 				author: 'bitch, please!'
 			}]
 		};
+
+		socket.on('MESSAGE_ADDED', this.addMessage);
 	}
 
 	handleLoginTextChange = (e) => {
@@ -46,13 +48,12 @@ export default class MessageContainer extends Component {
 	}
 
 	handlePost = () => {
-		this.addMessage({
+		socket.emit('NEW_MESSAGE', {
 			msg: this.state.messageText,
 			author: this.state.username
-		}).then(() => {
-			this.setState({
-				messageText: ''
-			});
+		});
+		this.setState({
+			messageText: ''
 		});
 	}
 
@@ -60,6 +61,7 @@ export default class MessageContainer extends Component {
 		this.setState({
 			username: this.state.loginText
 		}, () => {
+			socket.emit('NEW_USER', { username: this.state.loginText });
 			this.setState({
 				loginText: ''
 			});
