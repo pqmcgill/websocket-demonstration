@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import socket_conn from '../util/socket_conn';
+import * as messageTypes from '../constants/MessageTypes';
 
 import NotificationList from '../components/NotificationList';
 
@@ -9,6 +11,7 @@ export default class NotificationContainer extends Component {
 		this.state = {
 			notifications: []
 		};
+		socket_conn.subscribeTo(messageTypes.NOTIFICATION, this.handleIncomingNotification);
 	}
 
 	addNotification = (note) => {

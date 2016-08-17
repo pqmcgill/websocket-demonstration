@@ -9,7 +9,17 @@ const config = require('./webpack.config');
 const port = process.env.PORT || 3000;
 const app = express();
 const server = http.Server(app);
+const io = require('socket.io')(server);
 
+// start server
+server.listen(port, 'localhost', (err) => {
+	if (err) 
+		console.log(err);
+
+	console.info('==> Listening on port %s. Open up http://localhost:%s/ in your browser.', port, port);
+});
+
+// express code
 const compiler = webpack(config);
 const middleware = webpackMiddleware(compiler, {
 	publicPath: config.output.publicPath,
@@ -30,9 +40,23 @@ app.get('/*', (req, res) => {
 	res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-server.listen(port, 'localhost', (err) => {
-	if (err) 
-		console.log(err);
+// socket.io code
+var userTable = {};
 
-	console.info('==> Listening on port %s. Open up http://localhost:%s/ in your browser.', port, port);
+id = 1;
+io.on('connection', socket => {
+	socket.on('LOGIN', (payload) => {
+		userTable[socket.id] = payload.username;
+		socket.broadcast.emit('NOTIFICATION', { id, title: 'User Joined', msg: payload.username });
+		id++;
+	});
+
+	socket.on('NEW_MESSAGE', (payload) => {
+		io.emit('MESSAGE_ADDED', payload);
+	});
+
+	socket.on('disconnect', () => {
+		io.emit('NOTIFICATION', { id, title: 'User Left', msg: userTable[socket.id] });
+	});
 });
+

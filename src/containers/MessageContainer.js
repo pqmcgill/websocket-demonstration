@@ -3,6 +3,8 @@ import MessageList from '../components/MessageList';
 import MessageInput from '../components/MessageInput';
 import LoginForm from '../components/LoginForm';
 import NotificationList from '../components/NotificationList';
+import socket_conn from '../util/socket_conn';
+import * as types from '../constants/MessageTypes';
 
 export default class MessageContainer extends Component {
 	constructor (props) {
@@ -23,6 +25,8 @@ export default class MessageContainer extends Component {
 				author: 'bitch, please!'
 			}]
 		};
+
+		socket_conn.subscribeTo(types.MESSAGE_ADDED, this.addMessage);
 	}
 
 	handleLoginTextChange = (e) => {
@@ -38,6 +42,7 @@ export default class MessageContainer extends Component {
 	}
 
 	addMessage = message => {
+		console.log('adding message');
 		return new Promise(resolve => {
 			this.setState({
 				messages: this.state.messages.concat([ message ])
@@ -46,13 +51,12 @@ export default class MessageContainer extends Component {
 	}
 
 	handlePost = () => {
-		this.addMessage({
+		socket_conn.emit('NEW_MESSAGE', {
 			msg: this.state.messageText,
 			author: this.state.username
-		}).then(() => {
-			this.setState({
-				messageText: ''
-			});
+		});
+		this.setState({
+			messageText: ''
 		});
 	}
 
@@ -60,6 +64,7 @@ export default class MessageContainer extends Component {
 		this.setState({
 			username: this.state.loginText
 		}, () => {
+			socket_conn.emit('LOGIN', { username: this.state.username });
 			this.setState({
 				loginText: ''
 			});
